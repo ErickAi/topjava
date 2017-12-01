@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="1420.1666666666665" y="663.0">ru.javawebinar.topjava.service.MealServiceImpl</node>
+    <node x="745.1666666666666" y="636.0">ru.javawebinar.topjava.repository.jdbc.JdbcMealRepositoryImpl</node>
+    <node x="14.166666666666629" y="703.5">ru.javawebinar.topjava.util.MealsUtil</node>
+    <node x="940.0" y="0.0">ru.javawebinar.topjava.model.AbstractBaseEntity</node>
+    <node x="896.5" y="305.0">ru.javawebinar.topjava.model.Meal</node>
+    <node x="0.0" y="332.0">ru.javawebinar.topjava.to.MealWithExceed</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="ru.javawebinar.topjava.service.MealServiceImpl" target="ru.javawebinar.topjava.model.Meal">
+      <point x="0.0" y="-127.0" />
+      <point x="1696.6666666666665" y="606.0" />
+      <point x="1206.25" y="606.0" />
+      <point x="132.75" y="140.5" />
+    </edge>
+    <edge source="ru.javawebinar.topjava.util.MealsUtil" target="ru.javawebinar.topjava.model.Meal">
+      <point x="237.0" y="-86.5" />
+      <point x="606.6666666666666" y="606.0" />
+      <point x="940.75" y="606.0" />
+      <point x="-132.75" y="140.5" />
+    </edge>
+    <edge source="ru.javawebinar.topjava.repository.jdbc.JdbcMealRepositoryImpl" target="ru.javawebinar.topjava.model.Meal">
+      <point x="163.75" y="-154.0" />
+      <point x="1236.4166666666665" y="616.0" />
+      <point x="1117.75" y="616.0" />
+      <point x="44.25" y="140.5" />
+    </edge>
+    <edge source="ru.javawebinar.topjava.model.Meal" target="ru.javawebinar.topjava.model.AbstractBaseEntity">
+      <point x="0.0" y="-140.5" />
+      <point x="0.0" y="127.5" />
+    </edge>
+    <edge source="ru.javawebinar.topjava.util.MealsUtil" target="ru.javawebinar.topjava.to.MealWithExceed">
+      <point x="0.0" y="-86.5" />
+      <point x="123.5" y="113.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.7508754377188595" x="989.5" y="478.0" />
+  <SelectedNodes>
+    <node>ru.javawebinar.topjava.to.MealWithExceed</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Properties</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

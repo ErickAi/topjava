@@ -1,0 +1,216 @@
+Index: .travis.yml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .travis.yml	(revision )
++++ .travis.yml	(revision )
+@@ -0,0 +1,22 @@
++# https://docs.travis-ci.com/user/languages/java/
++language: java
++jdk: oraclejdk8
++
++#https://dzone.com/articles/travis-ci-tutorial-java-projects
++cache:
++  directories:
++  - $HOME/.m2
++
++# https://docs.travis-ci.com/user/database-setup/#PostgreSQL
++before_script:
++  - psql -c 'create database topjava' -U postgres
++  - psql -c 'create user "user"; grant all privileges on database topjava to "user"' -U postgres
++
++# https://docs.travis-ci.com/user/customizing-the-build#Building-Specific-Branches
++branches:
++  only:
++  - master
++
++# https://docs.travis-ci.com/user/notifications#Configuring-email-notifications
++#notifications:
++#  email: false
+\ No newline at end of file
+Index: src/main/java/ru/javawebinar/topjava/util/DateTimeUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/ru/javawebinar/topjava/util/DateTimeUtil.java	(date 1511390076000)
++++ src/main/java/ru/javawebinar/topjava/util/DateTimeUtil.java	(revision )
+@@ -13,6 +13,9 @@
+     public static final LocalDate MIN_DATE = LocalDate.of(1, 1, 1);
+     public static final LocalDate MAX_DATE = LocalDate.of(3000, 1, 1);
+ 
++    private DateTimeUtil() {
++    }
++
+     public static <T extends Comparable<? super T>> boolean isBetween(T value, T start, T end) {
+         return value.compareTo(start) >= 0 && value.compareTo(end) <= 0;
+     }
+Index: src/main/java/ru/javawebinar/topjava/service/UserServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/ru/javawebinar/topjava/service/UserServiceImpl.java	(date 1511390076000)
++++ src/main/java/ru/javawebinar/topjava/service/UserServiceImpl.java	(revision )
+@@ -2,6 +2,7 @@
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
++import org.springframework.util.Assert;
+ import ru.javawebinar.topjava.model.User;
+ import ru.javawebinar.topjava.repository.UserRepository;
+ import ru.javawebinar.topjava.util.exception.NotFoundException;
+@@ -23,6 +24,7 @@
+ 
+     @Override
+     public User create(User user) {
++        Assert.notNull(user, "user must not be null");
+         return repository.save(user);
+     }
+ 
+@@ -38,6 +40,7 @@
+ 
+     @Override
+     public User getByEmail(String email) throws NotFoundException {
++        Assert.notNull(email, "email must not be null");
+         return checkNotFound(repository.getByEmail(email), "email=" + email);
+     }
+ 
+@@ -48,6 +51,7 @@
+ 
+     @Override
+     public void update(User user) {
++        Assert.notNull(user, "user must not be null");
+         checkNotFoundWithId(repository.save(user), user.getId());
+     }
+ }
+\ No newline at end of file
+Index: src/main/java/ru/javawebinar/topjava/util/MealsUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/ru/javawebinar/topjava/util/MealsUtil.java	(date 1511390076000)
++++ src/main/java/ru/javawebinar/topjava/util/MealsUtil.java	(revision )
+@@ -16,6 +16,9 @@
+ 
+     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
+ 
++    private MealsUtil() {
++    }
++
+     public static List<MealWithExceed> getWithExceeded(Collection<Meal> meals, int caloriesPerDay) {
+         return getFilteredWithExceeded(meals, LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
+     }
+Index: src/test/java/ru/javawebinar/topjava/repository/mock/InMemoryMealRepositoryImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/test/java/ru/javawebinar/topjava/repository/mock/InMemoryMealRepositoryImpl.java	(date 1511390076000)
++++ src/test/java/ru/javawebinar/topjava/repository/mock/InMemoryMealRepositoryImpl.java	(revision )
+@@ -11,10 +11,7 @@
+ import javax.annotation.PostConstruct;
+ import javax.annotation.PreDestroy;
+ import java.time.LocalDateTime;
+-import java.util.Collections;
+-import java.util.Comparator;
+-import java.util.List;
+-import java.util.Map;
++import java.util.*;
+ import java.util.concurrent.ConcurrentHashMap;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.function.Predicate;
+@@ -30,6 +27,7 @@
+ 
+     @Override
+     public Meal save(Meal meal, int userId) {
++        Objects.requireNonNull(meal);
+         Map<Integer, Meal> meals = repository.computeIfAbsent(userId, ConcurrentHashMap::new);
+         if (meal.isNew()) {
+             meal.setId(counter.incrementAndGet());
+@@ -68,6 +66,8 @@
+ 
+     @Override
+     public List<Meal> getBetween(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
++        Objects.requireNonNull(startDateTime);
++        Objects.requireNonNull(endDateTime);
+         return getAllFiltered(userId, meal -> DateTimeUtil.isBetween(meal.getDateTime(), startDateTime, endDateTime));
+     }
+ 
+Index: src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java	(date 1511390076000)
++++ src/main/java/ru/javawebinar/topjava/util/ValidationUtil.java	(revision )
+@@ -6,6 +6,9 @@
+ 
+ public class ValidationUtil {
+ 
++    private ValidationUtil() {
++    }
++
+     public static void checkNotFoundWithId(boolean found, int id) {
+         checkNotFound(found, "id=" + id);
+     }
+Index: src/main/java/ru/javawebinar/topjava/service/MealServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/ru/javawebinar/topjava/service/MealServiceImpl.java	(date 1511390076000)
++++ src/main/java/ru/javawebinar/topjava/service/MealServiceImpl.java	(revision )
+@@ -2,6 +2,7 @@
+ 
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
++import org.springframework.util.Assert;
+ import ru.javawebinar.topjava.model.Meal;
+ import ru.javawebinar.topjava.repository.MealRepository;
+ 
+@@ -32,6 +33,8 @@
+ 
+     @Override
+     public List<Meal> getBetweenDateTimes(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
++        Assert.notNull(startDateTime, "startDateTime must not be null");
++        Assert.notNull(endDateTime, "endDateTime  must not be null");
+         return repository.getBetween(startDateTime, endDateTime, userId);
+     }
+ 
+@@ -47,6 +50,7 @@
+ 
+     @Override
+     public Meal create(Meal meal, int userId) {
++        Assert.notNull(meal, "meal must not be null");
+         return repository.save(meal, userId);
+     }
+ }
+\ No newline at end of file
+Index: pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- pom.xml	(date 1511390076000)
++++ pom.xml	(revision )
+@@ -16,7 +16,7 @@
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+ 
+-        <spring.version>4.3.12.RELEASE</spring.version>
++        <spring.version>5.0.1.RELEASE</spring.version>
+ 
+         <!-- Logging -->
+         <logback.version>1.2.3</logback.version>
+@@ -111,7 +111,7 @@
+         <dependency>
+             <groupId>javax.servlet</groupId>
+             <artifactId>javax.servlet-api</artifactId>
+-            <version>3.1.0</version>
++            <version>4.0.0</version>
+             <scope>provided</scope>
+         </dependency>
+ 
