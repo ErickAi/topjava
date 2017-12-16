@@ -40,7 +40,7 @@ public class MealServiceImplTest {
     }
     @Test(expected = NotFoundException.class)
     public void getNotFoundException() throws Exception {
-        service.get(USER_MEAL_ID, USER_ID);
+        service.get(USER_MEAL_ID, ADMIN_ID);
     }
 
     @Test
