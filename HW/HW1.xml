@@ -1,0 +1,23 @@
+<!-- -->
+	java.ru.javawebinar.topjava
+					model
+						-Meal.java
+						-MealWithExceed.java
+					util
+						-MealsUtil.java
+						-TimeUtil.java
+					web
+						-UserServlet.java
+<!-- добавить класс MealServlet-->				
+					-Main.java
+	resources
+		-logback.xml
+	webapp
+		WEB-INF
+			-web.xml
+		-index.html
+<!-- добавить в индекс ссылку на еду-->
+		-users.jsp
+<!-- добавить еда.жсп-->
+<!-- отрисовать в ней таблицу-->
+	-main.iml

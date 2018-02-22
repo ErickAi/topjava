@@ -1,0 +1,148 @@
+<!--тестирование JUnit, Spring test, базы данных. PostgreSQL-->	
+	main
+		java
+			ru
+				javawebinar
+					topjava
+						model
+							-AbstractBaseEntity.java
+							-AbstractNamedEntity.java
+							-Meal.java
+							-Role.java
+							-User.java
+						repository
+							jdbc
+<!--3: реализовать через Spring JDBC Template доступ к еде в БД. -->	
+								-JdbcMealRepositoryImpl.java
+								-JdbcUserRepositoryImpl.java
+							-MealRepository.java
+							-UserRepository.java
+						service
+							-MealService.java
+							-MealServiceImpl.java
+							-UserService.java
+							-UserServiceImpl.java
+						to
+							-MealWithExceed.java
+						util
+							exception
+								-NotFoundException.java
+							-MealsUtil.java
+							-ValidationUtil.java
+							-DateTimeUtil.java
+						web
+							meal
+								-MealRestController.java
+<!--4: Проверить работу MealServlet-->	
+							-MealServlet.java
+							user
+								-AbstractUserController.java
+								-AdminRestController.java
+								-ProfileRestController.java
+							-UserServlet.java
+						-AuthorizedUser.java
+		resources
+			db
+<!--2: Дополнить скрипты создания и инициализации базы таблицой MEALS-->	
+				-initDB.sql
+				-populateDB.sql
+				-postgres.properties
+			spring
+				-spring-app.xml
+				-spring-db.xml
+			-logback.xml
+		webapp
+			css
+				-style.css
+			-index.html
+			-mealForm.jsp
+			-meals.jsp
+			-users.jsp
+			WEB-INF
+				tld
+					-functions.tld
+				-web.xml
+		-main.iml
+<!---->	
+<!--1: отвалились тесты. почему? -->	
+	test
+		java
+			ru
+				javawebinar
+					topjava
+						repository
+							mock
+								-InMemoryMealRepositoryImpl.java
+								-InMemoryUserRepositoryImpl.java
+						service
+<!--5: реализовать тесты MealServiceTest. смотри пункт 5-->	
+							-UserServiceTest.java
+						web
+							-InMemoryAdminRestControllerSpringTest.java
+							-InMemoryAdminRestControllerTest.java
+						-SpringMain.java
+<!--тестовые данные, что и в populateDB.sql-->	
+						-UserTestData.java
+		resources
+			-logback-test.xml
+<!---->	
+Домашнее задание HW03
+
+1 Понять, почему перестали работать SpringMain, InMemoryAdminRestControllerTest, InMemoryAdminRestControllerSpringTest
+2 Дополнить скрипты создания и инициализации базы таблицой MEALS. Запустить скрипты на вашу базу (через Run). 
+	Порядок таблиц при DROP и DELETE важен, если они связаны внешними ключами (foreign key, fk). 
+	Проверьте, что ваши скрипты работают
+3 Реализовать через Spring JDBC Template JdbcMealRepositoryImpl
+3.1. сделать каждый метод за один SQL запрос
+3.2. userId в класс Meal вставлять НЕ надо (для UI и REST это лишние данные, userId это id залогиненного пользователя)
+3.3. JbdcTemplate работает через сеттеры. Вместе с конструктором по умолчанию их нужно добавить в Meal
+3.4. Cписок еды должен быть отсортирован (тогда мы его сможем сравнивать с тестовыми данными). 
+	Кроме того это требуется для UI и API: последняя еда наверху.
+4 Проверить работу MealServlet, запустив приложение
+
+Optional
+5 Сделать MealServiceTest из MealService и реализовать тесты.
+По Ctrl+Shift+T (выбрать JUnit4) можно создать тест для конкретного класса, выбрав для него нужные методы. 
+	Тестовый класс создастся в папке test в том же пакете, что и тестируемый.
+5.1 Сделать тестовые данные MealTestData (точно такие же, как вставляем в populateDB.sql).
+5.2 Сделать тесты на чужую еду (delete, get, update) с тем чтобы получить NotFoundException.
+6 Почнинить SpringMain, InMemory*Test. InMemory*Test должны использовать реализацию в памяти
+7 Сделать индексы к таблице Meals: запретить создавать у одного и того-же юзера еду с одинаковой dateTime. 
+	Индекс на pk (id) postgres создает автоматически: Postgres and Indexes on Foreign Keys and Primary Keys
+
+	Postgres Guide: Indexes
+question Как правильно придумать индекс для базы? Указать в нем все поля, комбинация 
+	которых создает по смыслу уникальную запись, или какие-то еще есть условия?
+Индекс нужно делать по тем полям, по которым будут искаться записи (участвуют в WHERE, ORDER BY). 
+	Уникальность - совсем не обязательное условие. Индексы ускоряют поиск по определенным полям таблицы. 
+	Они не бесплатные (хранятся в памяти, замедляется вставка), поэтому на всякий случай их делать не надо. 
+	Также не строят индексы на колонки с малым процентом уникальности (например поле "М/Ж"). 
+	Поля индекса НЕ КОММУТАТИВНЫ и порядок полей в описании индекса НЕОБХОДИМО соблюдать 
+	(в силу использования B-деревьев и их производных как поисковый механизм индекса). 
+	При построении плана запроса EXPLAIN учитывается количество записей в базе, поэтому вместо индексного поиска (Index Scan) база может выбрать последовательный (Seq Scan). 
+	Проверить, работают ли индексы можно отключив Seq Scan. Также см. Queries on the first field of composite index
+
+error Решение проблем
+		Из каталога main не видятся классы/ресурсы в test
+Все что находится в test используется только для тестов и недоступно в основном коде.
+
+		Из IDEA не видятся ресурсы в каталоге test
+Сделайте Reimport All в Maven окне
+
+		В UserServiceImpl и MealServiceImpl подчеркнуты красным repository, ошибка: 
+		Could not autowire. There is more than one bean of 'MealRepository' type.
+Spring test контекст не надо включать в Spring Facets проекта, там должны быть только spring-app.xml и spring-db.xml. 
+Для тестовых контекстов поставьте чекбокс Check test files в Inspections.
+
+error Проверка по HW03 (сначала сделайте самостоятельно!)
+
+1: В MealTestData еду делайте константами. Не надо Map конструкций!
+2: SQL case-insensitive, не надо писать в стиле Camel. В POSTGRES возможны case-sensitive значения, 
+	их надо в кавычки заключать (обычно не делают).
+3: ЕЩЕ РАЗ: InMemory тесты должны идти на InMemory репозитории
+4: Проверьте, что возвращает JdbcMealRepositoryImpl при обновлении чужой еды
+5: В реализации JdbcMealRepositoryImpl одним SQL запросом используйте возвращаемое update значение the number of rows affected
+6: При тестировании не портите констант из MealTestData
+7: Проверьте, что все, что относится к тестам, ноходится в каталоге test (не попадает в сборку проекта)
+8: Еще раз: в тестах проверять через JUnit Assert нельзя. Он проверяет через equals, который, 
+учитавая будующие JPA реализации, мы не можем переопределить как сравнение по всем поля.

@@ -1,0 +1,122 @@
+main:
+	java.ru.javawebinar.topjava
+		model
+			-AbstractBaseEntity.java
+			-AbstractNamedEntity.java
+			-Meal.java
+			-Role.java
+			-User.java
+		repository
+		datajpa
+<!--1: Имплементировать CrudMealRepository -->
+				-CrudMealRepository.java
+				-CrudUserRepository.java
+<!--1: Имплементировать DataJpaMealRepositoryImpl -->
+				-DataJpaMealRepositoryImpl.java
+				-DataJpaUserRepositoryImpl.java
+			jdbc
+<!--5: Разделить JdbcMealRepositoryImpl для HSQLDB (она не умеет работать с Java8 Time API) и Postgres через @Profile (для Postgres оставить LocalDateTime). Цель задания - потренироваться с паттерном шаблонный метод и профилями Spring. Бины Spring мы разделяем (фильтруем) по разным профилям с помощью beans profile в xml конфигурации и @Profile (те мы конфигурируем, какие бины попадут в контекст Spring в зависимости от активных профилей приложения). Абстрактные классы не создаются и в контекст не попадают. Профили, заданные в @Profile пересекаются с активными профилями приложения: если пересечение есть, то бин включается в контекст (cм. реализацию @Profile и в ней ProfileCondition, можно подебажить). Например при сконфигуренном @Profile({"postgres","jdbc"}) бин попадет в контекст, если в профилях запущенного приложения есть хотя бы один из них (например "jdbc"). После выполнения разделения можно предложить решение проще. -->
+				-JdbcMealRepositoryImpl.java
+				-JdbcUserRepositoryImpl.java
+			jpa
+				-JpaMealRepositoryImpl.java
+				-JpaUserRepositoryImpl.java
+			-MealRepository.java
+			-UserRepository.java
+		service
+<!--7: Сделать и протестировать в сервисах методы (тесты и реализация только для DataJpa)
+	7.1: достать по id пользователя вместе с его едой
+	7.2: достать по id еду вместе с пользователем
+	7.3: обращения к DB сделать в одной транзакции (можно сделать разные варианты).
+	-->							-MealService.java
+			-MealServiceImpl.java
+			-UserService.java
+			-UserServiceImpl.java
+		to
+			-MealWithExceed.java
+		util
+			exception
+				-NotFoundException.java
+			-DateTimeUtil.java
+			-MealsUtil.java
+			-ValidationUtil.java
+		web
+			meal
+				-MealRestController.java
+			user
+				-AbstractUserController.java
+				-AdminRestController.java
+				-ProfileRestController.java
+<!--6: Починить MealServlet и использовать в SpringMain реализацию DB: добавить профили. Попробуйте поднять Spring контекст без использования spring.profiles.active. -->
+			-MealServlet.java
+			-UserServlet.java
+		-AuthorizedUser.java
+		-Profiles.java
+	resources
+		cache
+			-ehcache.xml
+		db
+			-hsqldb.properties
+			-initDB.sql
+			-initDB_hsql.sql
+			-populateDB.sql
+			-postgres.properties
+		spring
+			-spring-app.xml
+<!--2: Разделить реализации Repository по профилям Spring: jdbc, jpa, datajpa (общее в профилях можно объединять, например <beans profile="datajpa,jpa">). -->
+<!--2.2: Для интеграции с IDEA не забудте выставить в spring-db.xml справа вверху в Change Profiles... профили, например datajpa, postgres
+	2.3: Общие части для всех в spring-db.xml можно оставить как есть без профилей вверху файла (до первого <beans profile= ). -->
+			-spring-db.xml
+			-spring-tools.xml
+		-logback.xml
+	webapp
+		css
+			-style.css
+		-index.html
+		-mealForm.jsp
+		-meals.jsp
+		-users.jsp
+		WEB-INF
+			tld
+				-functions.tld
+			-web.xml
+test.java.ru.javawebinar.topjava
+<!--4: Запустить все тесты: mvn test (в IDEA Maven Lifecycle - test, кнопку skipTest отжать) -->
+<!--2.1: Профили выбора DB (postgres/hsqldb) и реализации репозитория (jdbc/datajpa/jpa) независимы друг от друга и при запуске задать приложения (тестов) нужно задать тот и другой. -->
+		repository
+				mock
+					-InMemoryMealRepositoryImpl.java
+					-InMemoryUserRepositoryImpl.java
+			service
+<!--3: Сделать тесты всех реализаций (jdbc, jpa, datajpa) через наследование (без дублирования)
+3.1 сделать один базовый класс для MealServiceTest и UserServiceTest.
+3.2 сводку по времени выполнения тестов также сделать для user -->
+				-MealServiceTest.java
+				-UserServiceTest.java
+			web
+				-InMemoryAdminRestControllerSpringTest.java
+				-InMemoryAdminRestControllerTest.java
+			-ActiveDbProfileResolver.java
+			-MealTestData.java
+			-SpringMain.java
+			-UserTestData.java
+	resources
+		spring
+			-mock.xml
+		-logback-test.xml
+<!--
+1: Для того, чтобы не запускались родительские классы тестов нужно сделать их abstract
+2: В реализациях JdbcMealRepository код не должен дублироваться. Если вы возвращаете тип Object, посмотрите в сторону дженериков.
+3: В MealServlet/SpringMain в момент setActiveProfiles контекст спринга еще не должен быть инициализирован, иначе выставление профиля уже ничего не будет делать.
+4: Если у метода нет реализации, то стандартно бросается UnsupportedOperationException.
+5: Для уменьшения количества кода при реализации Optional (п. 7, только DataJpa) попробуйте сделать default метод в интерфейсе
+6: В Data-Jpa метод для ссылки на entity (аналог em.getReference) : T getOne(ID id)
+7: Проверьте, что в DataJpaMealRepositoryImpl все обращения к DB выполняются в одной транзакции
+8: Для достать по id пользователя вместе с его едой я в User добавил List<Meal> meals
+9: Проверьте, что все тесты запускаются из Maven (имена классов тестов удовлетворяют соглашению) и итоги тестов класса выводятся корректно (не копятся)
+10: @ActiveProfiles принимает в качестве параметра строку, либо массив строк. В тестах можно задавать несколько @ActiveProfiles в разных классах, они суммируются
+11: В релизации 7.1 учесть, что у юзера может отсутствовать еда
+12: Ordering a join fetched collection in JPA using JPQL/HQL
+13: <beans profile= в конфигурации контекста должны находиться после всех остальных объявлений.
+14: По умолчанию maven-surefire-plugin включает в тесты классы, заканчивающиеся на Test.
+-->
