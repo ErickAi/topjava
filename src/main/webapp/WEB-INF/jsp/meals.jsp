@@ -5,6 +5,8 @@
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
+<script type="text/javascript" src="resources/js/datatablesUtil.js" defer></script>
+<script type="text/javascript" src="resources/js/mealDatatables.js" defer></script>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <div class="jumbotron">
@@ -83,7 +85,7 @@
                         </td>
                         <td>${meal.description}</td>
                         <td>${meal.calories}</td>
-                        <td><a href="meals/update?id=${meal.id}"><spring:message code="common.update"/></a></td>
+                        <td><a><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td>
                         <td><a href="meals/delete?id=${meal.id}"><spring:message code="common.delete"/></a></td>
                     </tr>
                 </c:forEach>
@@ -91,10 +93,11 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="editRow">
     <div class="modal-dialog">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss aria-hidden="true"></button>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
         </div>
         <div class="modal-body">
             <form class="form-horizontal" id="detailsForm">
