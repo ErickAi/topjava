@@ -5,7 +5,7 @@ function updateTable() {
     $.ajax({
         type: "POST",
         url: ajaxUrl + "filter",
-        data: $("#filter").serialize(),
+        data: $("#filter").serialize()
     }).done(updateTableByData);
 }
 
@@ -18,19 +18,13 @@ $(function () {
     datatableApi = $("#datatable").DataTable({
         "ajax": {
             "url": ajaxUrl,
-            "daraSrc": ""
+            "dataSrc": ""
         },
         "paging": false,
         "info": true,
         "columns": [
             {
-                "data": "dateTime",
-                "render": function (date, type, row) {
-                    if (type === 'display') {
-                        return date.replace('T', ' ').substr(0, 16);
-                    }
-                    return date;
-                }
+                "data": "dateTime"
             },
             {
                 "data": "description"
@@ -39,11 +33,13 @@ $(function () {
                 "data": "calories"
             },
             {
-                "defaultContent": "Edit",
+                "render": renderEditBtn,
+                "defaultContent": "",
                 "orderable": false
             },
             {
-                "defaultContent": "Delete",
+                "render": renderDeleteBtn,
+                "defaultContent": "",
                 "orderable": false
             }
         ],
@@ -53,7 +49,7 @@ $(function () {
                 "desc"
             ]
         ],
-        "createRow": function (row, date, dateIndex) {
+        "createdRow": function (row, data, dataIndex) {
             $(row).addClass(data.exceed ? 'exceeded' : 'normal');
         },
         "initComplete": makeEditable()

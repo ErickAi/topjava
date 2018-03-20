@@ -93,6 +93,7 @@
         $('input[name="email"]').val(mail);
         $('input[name="password"]').val(password);
         save();
+        updateTable();
     }
 </script>
 
