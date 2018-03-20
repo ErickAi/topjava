@@ -132,7 +132,7 @@
 </body>
 <jsp:include page="fragments/i18n.jsp"/>
 <script type="text/javascript">
-i18n["addTitle"] = '<spring:message code="meal.add"/>';
-i18n["editTitle"] = '<spring:message code="meal.edit"/>';
+    i18n["addTitle"] = '<spring:message code="meal.add"/>';
+    i18n["editTitle"] = '<spring:message code="meal.edit"/>';
 </script>
 </html>
