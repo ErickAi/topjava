@@ -49,8 +49,7 @@
                         <label for="name" class="control-label col-xs-3"><spring:message code="user.name"/></label>
 
                         <div class="col-xs-9">
-                            <input type="text" class="form-control" id="name" name="name"
-                                   placeholder="<spring:message code="user.name"/>">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="<spring:message code="user.name"/>">
                         </div>
                     </div>
 
@@ -58,18 +57,15 @@
                         <label for="email" class="control-label col-xs-3"><spring:message code="user.email"/></label>
 
                         <div class="col-xs-9">
-                            <input type="email" class="form-control" id="email" name="email"
-                                   placeholder="<spring:message code="user.email"/>">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="<spring:message code="user.email"/>">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="password" class="control-label col-xs-3"><spring:message
-                                code="user.password"/></label>
+                        <label for="password" class="control-label col-xs-3"><spring:message code="user.password"/></label>
 
                         <div class="col-xs-9">
-                            <input type="password" class="form-control" id="password" name="password"
-                                   placeholder="<spring:message code="user.password"/>">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="<spring:message code="user.password"/>">
                         </div>
                     </div>
 
@@ -101,8 +97,8 @@
 </script>
 
 </body>
+<jsp:include page="fragments/i18n.jsp"/>
 <script type="text/javascript">
-    <jsp:include page="fragments/i18n.jsp"/>
     i18n["addTitle"] = '<spring:message code="user.add"/>';
     i18n["editTitle"] = '<spring:message code="user.edit"/>';
 </script>
