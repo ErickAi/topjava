@@ -49,7 +49,8 @@
                         <label for="name" class="control-label col-xs-3"><spring:message code="user.name"/></label>
 
                         <div class="col-xs-9">
-                            <input type="text" class="form-control" id="name" name="name" placeholder="<spring:message code="user.name"/>">
+                            <input type="text" class="form-control" id="name" name="name"
+                                   placeholder="<spring:message code="user.name"/>">
                         </div>
                     </div>
 
@@ -57,15 +58,18 @@
                         <label for="email" class="control-label col-xs-3"><spring:message code="user.email"/></label>
 
                         <div class="col-xs-9">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="<spring:message code="user.email"/>">
+                            <input type="email" class="form-control" id="email" name="email"
+                                   placeholder="<spring:message code="user.email"/>">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="password" class="control-label col-xs-3"><spring:message code="user.password"/></label>
+                        <label for="password" class="control-label col-xs-3"><spring:message
+                                code="user.password"/></label>
 
                         <div class="col-xs-9">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="<spring:message code="user.password"/>">
+                            <input type="password" class="form-control" id="password" name="password"
+                                   placeholder="<spring:message code="user.password"/>">
                         </div>
                     </div>
 
@@ -73,6 +77,11 @@
                         <div class="col-xs-offset-3 col-xs-9">
                             <button type="button" onclick="save()" class="btn btn-primary">
                                 <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                            </button>
+
+                            <button type="submit" class="btn btn-primary"
+                                    onclick="setCredentials('Er', 'er@yandex.ru', 'password')">
+                                Fill form
                             </button>
                         </div>
                     </div>
@@ -82,14 +91,19 @@
     </div>
 </div>
 <jsp:include page="fragments/footer.jsp"/>
+<script type="text/javascript">
+    function setCredentials(name, mail, password) {
+        $('input[name="name"]').val(name);
+        $('input[name="email"]').val(mail);
+        $('input[name="password"]').val(password);
+        save();
+    }
+</script>
+
 </body>
 <script type="text/javascript">
-    var i18n = [];
+    <jsp:include page="fragments/i18n.jsp"/>
     i18n["addTitle"] = '<spring:message code="user.add"/>';
     i18n["editTitle"] = '<spring:message code="user.edit"/>';
-
-    <c:forEach var="key" items='<%=new String[]{"common.deleted","common.saved","common.enabled","common.disabled","common.errorStatus"}%>'>
-    i18n["${key}"] = "<spring:message code="${key}"/>";
-    </c:forEach>
 </script>
 </html>

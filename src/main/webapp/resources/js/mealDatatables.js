@@ -16,11 +16,21 @@ function clearFilter() {
 
 $(function () {
     datatableApi = $("#datatable").DataTable({
+        "ajax": {
+            "url": ajaxUrl,
+            "daraSrc": ""
+        },
         "paging": false,
         "info": true,
         "columns": [
             {
-                "data": "dateTime"
+                "data": "dateTime",
+                "render": function (date, type, row) {
+                    if (type === 'display') {
+                        return date.replace('T', ' ').substr(0, 16);
+                    }
+                    return date;
+                }
             },
             {
                 "data": "description"
@@ -42,7 +52,10 @@ $(function () {
                 0,
                 "desc"
             ]
-        ]
+        ],
+        "createRow": function (row, date, dateIndex) {
+            $(row).addClass(data.exceed ? 'exceeded' : 'normal');
+        },
+        "initComplete": makeEditable()
     });
-    makeEditable();
 });
